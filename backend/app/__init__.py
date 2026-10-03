@@ -1,0 +1,1 @@
+"""SmartMart Backend Application Package"""
