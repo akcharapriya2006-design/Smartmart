@@ -1,0 +1,51 @@
+services:
+  # ---------------------------------------------------------------------------
+  # SmartMart Backend REST API (FastAPI)
+  # ---------------------------------------------------------------------------
+  - type: web
+    name: smartmart-backend
+    runtime: python
+    plan: free
+    region: oregon
+    rootDir: backend
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: DATABASE_URL
+        fromDatabase:
+          name: smartmart-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: USE_SQLITE_FALLBACK_IF_PG_UNAVAILABLE
+        value: "true"
+
+  # ---------------------------------------------------------------------------
+  # SmartMart Frontend Storefront & Admin Portal (Angular Static Site)
+  # ---------------------------------------------------------------------------
+  - type: static
+    name: smartmart-frontend
+    plan: free
+    region: oregon
+    rootDir: frontend
+    buildCommand: "npm install && npm run build"
+    staticPublishPath: "dist/frontend/browser"
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: NODE_VERSION
+        value: 22.12.0
+
+databases:
+  # ---------------------------------------------------------------------------
+  # SmartMart PostgreSQL Managed Database
+  # ---------------------------------------------------------------------------
+  - name: smartmart-db
+    databaseName: smartmart
+    user: smartmart
+    plan: free
+    region: oregon

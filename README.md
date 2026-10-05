@@ -91,3 +91,30 @@ smartmart/
 - **My Orders & Receipts**: Itemized order receipts with product thumbnails and pricing breakdowns.
 - **Live Order Tracking**: Visual progress flow for supermarket fulfillment from confirmation to delivery/pickup.
 - **Admin Portal**: Inventory management, product/category catalog management, and order status workflow controls.
+
+## Deploying to Render
+
+This repository is pre-configured for seamless deployment to [Render](https://render.com).
+
+### Option 1: Blueprint Deployment (Recommended)
+1. Go to the [Render Dashboard](https://dashboard.render.com).
+2. Click **New** > **Blueprint**.
+3. Connect your GitHub repository.
+4. Render will detect [`render.yaml`](file:///c:/Users/ELCOT/Documents/smartmart/render.yaml) and automatically create:
+   - **`smartmart-backend`**: FastAPI REST API Web Service
+   - **`smartmart-frontend`**: Angular Static Site with SPA client-side routing
+   - **`smartmart-db`**: Managed PostgreSQL Database
+5. Click **Apply**. Database tables and initial catalog data are seeded automatically on first launch.
+
+### Option 2: Unified Web Service Deployment
+- **Build Command**: `./build.sh`
+- **Start Command**: `cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+- **Environment Variables**:
+  - `DATABASE_URL`: Your PostgreSQL connection string (supports `postgres://` and `postgresql://`)
+  - `SECRET_KEY`: Random secret string for JWT signing
+  - `USE_SQLITE_FALLBACK_IF_PG_UNAVAILABLE`: `true`
+
+### Default Seed Credentials
+- **Admin**: `admin@smartmart.com` / `admin123`
+- **Customer**: `customer@smartmart.com` / `customer123`
+
