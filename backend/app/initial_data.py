@@ -224,7 +224,7 @@ PRODUCTS_DATA = [
         "stock_quantity": 75,
         "low_stock_threshold": 20,
         "unit": "bottle (750ml)",
-        "image_url": "https://images.unsplash.com/photo-1559839914-ba2ae647c300?auto=format&fit=crop&w=600&q=80"
+        "image_url": "https://images.unsplash.com/photo-1556881286-fc6915169721?auto=format&fit=crop&w=600&q=80"
     },
 
     # Pantry & Groceries
@@ -262,7 +262,7 @@ PRODUCTS_DATA = [
         "stock_quantity": 55,
         "low_stock_threshold": 15,
         "unit": "pack (500g)",
-        "image_url": "https://images.unsplash.com/photo-1621996346565-e3d5d6281691?auto=format&fit=crop&w=600&q=80"
+        "image_url": "https://images.unsplash.com/photo-1551462147-ff29053bfc14?auto=format&fit=crop&w=600&q=80"
     },
 
     # Snacks & Confectionery
@@ -391,6 +391,10 @@ def init_db():
                 db.add(category)
                 db.commit()
                 db.refresh(category)
+            else:
+                if category.image_url != cat_data["image_url"]:
+                    category.image_url = cat_data["image_url"]
+                    db.commit()
             category_map[cat_data["name"]] = category.id
 
         # 4. Seed Products
@@ -430,6 +434,12 @@ def init_db():
                 )
                 db.add(inv_trans)
                 db.commit()
+            else:
+                # Synchronize updated image_url if changed
+                if existing_prod.image_url != prod_data["image_url"]:
+                    logger.info(f"Updating image for {existing_prod.sku}: {existing_prod.image_url} -> {prod_data['image_url']}")
+                    existing_prod.image_url = prod_data["image_url"]
+                    db.commit()
 
         logger.info("Database seeding completed successfully!")
 

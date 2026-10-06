@@ -129,7 +129,7 @@ import { NotificationService } from '../../core/services/notification.service';
           <div *ngFor="let product of productService.products()" class="product-card">
             <!-- Product Image -->
             <div class="card-img-wrap" (click)="openProductDetail(product)">
-              <img [src]="product.image_url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80'" [alt]="product.name" loading="lazy" />
+              <img [src]="product.image_url || defaultImageUrl" [alt]="product.name" loading="lazy" (error)="onImageError($event)" />
               
               <span class="category-tag">{{ product.category_name }}</span>
 
@@ -674,6 +674,14 @@ export class CatalogComponent implements OnInit {
   inStockOnly = false;
   sortBy = 'name_asc';
   selectedCategoryId = signal<number | null>(null);
+  readonly defaultImageUrl = 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80';
+
+  onImageError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    if (target && target.src !== this.defaultImageUrl) {
+      target.src = this.defaultImageUrl;
+    }
+  }
 
   private searchDebounceTimer: any;
 

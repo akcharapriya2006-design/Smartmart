@@ -155,7 +155,7 @@ export class CategoryDialogComponent implements OnInit {
           <ng-container matColumnDef="image">
             <th mat-header-cell *matHeaderCellDef>Banner</th>
             <td mat-cell *matCellDef="let cat">
-              <img [src]="cat.image_url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=150&q=80'" class="cat-thumb" [alt]="cat.name" />
+              <img [src]="cat.image_url || defaultImageUrl" class="cat-thumb" [alt]="cat.name" (error)="onImageError($event)" />
             </td>
           </ng-container>
 
@@ -257,6 +257,15 @@ export class AdminCategoriesComponent implements OnInit {
   private dialog = inject(MatDialog);
 
   columns = ['image', 'name_desc', 'product_count', 'status', 'actions'];
+
+  readonly defaultImageUrl = 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=150&q=80';
+
+  onImageError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    if (target && target.src !== this.defaultImageUrl) {
+      target.src = this.defaultImageUrl;
+    }
+  }
 
   ngOnInit() {
     this.categoryService.loadCategories(true).subscribe();

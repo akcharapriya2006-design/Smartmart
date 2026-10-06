@@ -105,7 +105,7 @@ import { AdminProductDialogComponent } from './admin-product-dialog.component';
             <ng-container matColumnDef="image">
               <th mat-header-cell *matHeaderCellDef>Photo</th>
               <td mat-cell *matCellDef="let p">
-                <img [src]="p.image_url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=150&q=80'" class="thumb-img" [alt]="p.name" />
+                <img [src]="p.image_url || defaultImageUrl" class="thumb-img" [alt]="p.name" (error)="onImageError($event)" />
               </td>
             </ng-container>
 
@@ -437,6 +437,14 @@ export class AdminProductsComponent implements OnInit {
   search = '';
   selectedCategory: number | null = null;
   stockFilter = 'ALL';
+  readonly defaultImageUrl = 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=150&q=80';
+
+  onImageError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    if (target && target.src !== this.defaultImageUrl) {
+      target.src = this.defaultImageUrl;
+    }
+  }
 
   ngOnInit() {
     this.categoryService.loadCategories(true).subscribe();

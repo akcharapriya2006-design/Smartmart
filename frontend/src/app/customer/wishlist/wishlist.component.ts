@@ -54,7 +54,7 @@ import { Product } from '../../core/models/product.model';
       <div class="wishlist-grid" *ngIf="wishlistService.items().length > 0">
         <mat-card *ngFor="let product of wishlistService.items()" class="wishlist-item-card">
           <div class="card-image-wrap" [routerLink]="['/products', product.id]">
-            <img [src]="product.image_url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80'" [alt]="product.name" />
+            <img [src]="product.image_url || defaultImageUrl" [alt]="product.name" (error)="onImageError($event)" />
             <span class="category-badge">{{ product.category_name }}</span>
             <button 
               mat-icon-button 
@@ -280,6 +280,15 @@ export class WishlistComponent {
   wishlistService = inject(WishlistService);
   private cartService = inject(CartService);
   private notification = inject(NotificationService);
+
+  readonly defaultImageUrl = 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80';
+
+  onImageError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    if (target && target.src !== this.defaultImageUrl) {
+      target.src = this.defaultImageUrl;
+    }
+  }
 
   moveToCart(product: Product) {
     this.cartService.addItem(product.id, 1).subscribe({

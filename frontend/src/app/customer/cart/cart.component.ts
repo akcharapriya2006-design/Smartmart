@@ -50,7 +50,7 @@ import { CartService } from '../../core/services/cart.service';
 
             <div class="items-list">
               <div *ngFor="let item of cartService.items()" class="cart-item-row">
-                <img [src]="item.image_url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=150&q=80'" class="item-thumb" [alt]="item.product_name" />
+                <img [src]="item.image_url || defaultImageUrl" class="item-thumb" [alt]="item.product_name" (error)="onImageError($event)" />
 
                 <div class="item-info">
                   <h3 class="item-name">{{ item.product_name }}</h3>
@@ -416,6 +416,15 @@ import { CartService } from '../../core/services/cart.service';
 })
 export class CartComponent implements OnInit {
   cartService = inject(CartService);
+
+  readonly defaultImageUrl = 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=150&q=80';
+
+  onImageError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    if (target && target.src !== this.defaultImageUrl) {
+      target.src = this.defaultImageUrl;
+    }
+  }
 
   ngOnInit() {
     this.cartService.loadCart().subscribe();

@@ -27,7 +27,7 @@ import { Product } from '../../core/models/product.model';
 
       <div class="modal-body">
         <div class="image-wrapper">
-          <img [src]="product.image_url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80'" [alt]="product.name" />
+          <img [src]="product.image_url || defaultImageUrl" [alt]="product.name" (error)="onImageError($event)" />
           <div class="low-stock-pill" *ngIf="product.is_low_stock && product.stock_quantity > 0">
             <mat-icon>warning</mat-icon> Only {{ product.stock_quantity }} left in stock!
           </div>
@@ -290,6 +290,15 @@ import { Product } from '../../core/models/product.model';
 export class ProductDetailDialogComponent {
   product: Product = inject(MAT_DIALOG_DATA);
   dialogRef = inject(MatDialogRef<ProductDetailDialogComponent>);
+
+  readonly defaultImageUrl = 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80';
+
+  onImageError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    if (target && target.src !== this.defaultImageUrl) {
+      target.src = this.defaultImageUrl;
+    }
+  }
 
   quantity = signal(1);
 

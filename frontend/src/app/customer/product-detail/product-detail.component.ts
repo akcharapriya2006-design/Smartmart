@@ -57,8 +57,9 @@ import { Product } from '../../core/models/product.model';
           <div class="image-section">
             <div class="image-wrapper">
               <img 
-                [src]="product()?.image_url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80'" 
+                [src]="product()?.image_url || defaultImageUrl" 
                 [alt]="product()?.name" 
+                (error)="onImageError($event)"
               />
               <span class="category-chip">{{ product()?.category_name }}</span>
               
@@ -449,6 +450,14 @@ export class ProductDetailComponent implements OnInit {
   isLoading = signal(true);
   quantity = signal(1);
   isAdding = signal(false);
+  readonly defaultImageUrl = 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80';
+
+  onImageError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    if (target && target.src !== this.defaultImageUrl) {
+      target.src = this.defaultImageUrl;
+    }
+  }
 
   ngOnInit() {
     this.route.paramMap.subscribe((params) => {
